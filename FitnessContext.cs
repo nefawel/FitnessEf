@@ -54,6 +54,9 @@ public sealed class FitnessContext : DbContext
             entity.Property(client => client.Email)
                 .HasColumnName("email")
                 .HasMaxLength(254);
+            entity.Property(client => client.Note)
+                .HasColumnName("note")
+                .HasMaxLength(500);
             entity.Property(client => client.RegistrationDate)
                 .HasColumnName("registration_date")
                 .HasColumnType("date")

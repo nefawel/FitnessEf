@@ -52,6 +52,11 @@ namespace FitnessEf.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("last_name");
 
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("note");
+
                     b.Property<string>("Phone")
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
