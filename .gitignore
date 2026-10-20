@@ -1,0 +1,20 @@
+## Build output
+bin/
+obj/
+
+## IDE files
+.vs/
+.vscode/
+*.user
+*.suo
+
+## Local database and secrets
+*.db
+*.db-shm
+*.db-wal
+.env
+appsettings.Development.json
+
+## EF Core local artifacts
+*.log
+
