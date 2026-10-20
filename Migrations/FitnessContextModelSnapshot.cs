@@ -58,18 +58,70 @@ namespace FitnessEf.Migrations
                         .HasColumnName("phone");
 
                     b.Property<DateOnly>("RegistrationDate")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("date")
-                        .HasColumnName("registration_date");
+                        .HasColumnName("registration_date")
+                        .HasDefaultValueSql("CURRENT_DATE");
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
+                        .HasDefaultValue("active")
                         .HasColumnName("status");
 
                     b.HasKey("ClientId");
 
-                    b.ToTable("clients", (string)null);
+                    b.ToTable("clients", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_clients_status", "\"status\" IN ('active', 'inactive')");
+                        });
+                });
+
+            modelBuilder.Entity("FitnessEf.Visit", b =>
+                {
+                    b.Property<int>("VisitId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("visit_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("VisitId"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer")
+                        .HasColumnName("client_id");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("note");
+
+                    b.Property<DateOnly>("VisitDate")
+                        .HasColumnType("date")
+                        .HasColumnName("visit_date");
+
+                    b.HasKey("VisitId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("visits", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessEf.Visit", b =>
+                {
+                    b.HasOne("FitnessEf.Client", "Client")
+                        .WithMany("Visits")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("FitnessEf.Client", b =>
+                {
+                    b.Navigation("Visits");
                 });
 #pragma warning restore 612, 618
         }

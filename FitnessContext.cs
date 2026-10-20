@@ -5,6 +5,7 @@ namespace FitnessEf;
 public sealed class FitnessContext : DbContext
 {
     public DbSet<Client> Clients => Set<Client>();
+    public DbSet<Visit> Visits => Set<Visit>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -63,6 +64,31 @@ public sealed class FitnessContext : DbContext
                 .HasMaxLength(20)
                 .HasDefaultValue("active")
                 .IsRequired();
+        });
+
+        modelBuilder.Entity<Visit>(entity =>
+        {
+            entity.ToTable("visits");
+            entity.HasKey(visit => visit.VisitId);
+
+            entity.Property(visit => visit.VisitId)
+                .HasColumnName("visit_id")
+                .ValueGeneratedOnAdd();
+            entity.Property(visit => visit.ClientId)
+                .HasColumnName("client_id")
+                .IsRequired();
+            entity.Property(visit => visit.VisitDate)
+                .HasColumnName("visit_date")
+                .HasColumnType("date")
+                .IsRequired();
+            entity.Property(visit => visit.Note)
+                .HasColumnName("note")
+                .HasMaxLength(500);
+
+            entity.HasOne(visit => visit.Client)
+                .WithMany(client => client.Visits)
+                .HasForeignKey(visit => visit.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
