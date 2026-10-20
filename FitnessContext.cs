@@ -27,7 +27,10 @@ public sealed class FitnessContext : DbContext
     {
         modelBuilder.Entity<Client>(entity =>
         {
-            entity.ToTable("clients");
+            entity.ToTable("clients", table =>
+                table.HasCheckConstraint(
+                    "ck_clients_status",
+                    "\"status\" IN ('active', 'inactive')"));
             entity.HasKey(client => client.ClientId);
 
             entity.Property(client => client.ClientId)
@@ -53,10 +56,12 @@ public sealed class FitnessContext : DbContext
             entity.Property(client => client.RegistrationDate)
                 .HasColumnName("registration_date")
                 .HasColumnType("date")
+                .HasDefaultValueSql("CURRENT_DATE")
                 .IsRequired();
             entity.Property(client => client.Status)
                 .HasColumnName("status")
                 .HasMaxLength(20)
+                .HasDefaultValue("active")
                 .IsRequired();
         });
     }
